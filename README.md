@@ -4,7 +4,6 @@
 ![Language](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![Library](https://img.shields.io/badge/library-PuLP-orange)
 ![Testing](https://img.shields.io/badge/testing-Pytest-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## 1. Project Overview
 
@@ -17,7 +16,7 @@ The solution will be a decision-support tool that minimizes operational costs wh
 
 ## 2. Approach & Proposed Solution
 
-The problem is a classic resource allocation challenge, perfectly suited for **Linear Programming (LP)**. My approach is to translate the business rules and constraints into a formal mathematical model and solve it using the `PuLP` library in Python.
+The problem is a resource allocation challenge, perfectly suited for **Linear Programming (LP)**. My approach is to translate the business rules and constraints into a formal mathematical model and solve it using the `PuLP` library in Python.
 
 ### A. Mathematical Formulation (The Plan)
 
