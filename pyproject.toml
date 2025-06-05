@@ -1,0 +1,202 @@
+# Refrigerant Optimization Model
+
+![Project Status](https://img.shields.io/badge/status-architecture%20&%20planning-blue)
+![CI/CD Pipeline](https://github.com/daksh-7/refrigerant-optimization-chemours/actions/workflows/ci.yml/badge.svg)
+![Language](https://img.shields.io/badge/python-3.10+-blue.svg)
+![Library](https://img.shields.io/badge/library-PuLP-orange)
+![Testing](https://img.shields.io/badge/testing-Pytest-brightgreen)
+
+> A command-line optimization tool for determining the most cost-effective strategy for managing refrigerant inventory through mathematical modeling.
+
+## Table of Contents
+
+- [Project Overview](#1-project-overview)
+- [Architectural Approach](#2-architectural-approach)
+- [Project Structure](#3-project-structure)
+- [Getting Started](#4-getting-started-installation)
+- [Usage](#5-usage-planned)
+- [Testing](#6-testing)
+- [Project Roadmap](#7-project-roadmap)
+
+## 1. Project Overview
+
+This project aims to deliver a CLI optimization tool to determine the most cost-effective strategy for managing refrigerant inventory. The proposed tool translates operational constraints and costs into a mathematical model, providing clear, data-driven recommendations on whether to:
+
+- **Refuel** an existing refrigerant mixture
+- **Formulate** a new blend.
+
+We are to optimize the cost-function, aiming to minimize costs associated with adding or extracting elemental components, while adhering to strict chemical ratio and quantity requirements.
+
+## 2. Architectural Approach
+
+The problem is modeled as a **Linear Program (LP)** and implemented in Python using the `PuLP` library. The project follows modern architectural principles with a modular, testable, and extensible design.
+
+### Data-Driven Design
+
+- **Configuration**: YAML files in the `examples/` directory
+- **Flexibility**: Test different scenairos without modifying the source
+- **Separation**: Clear distinction between data, logic, and presentation
+
+### Core Components
+
+The `src/` directory contains the following modules:
+
+| Module | Purpose |
+|--------|---------|
+| `model.py` | Optimization core: LP formulation, decision variables, objective function, and constraints |
+| `data.py` | Centralized static data - element pricing tables and default chemical ratios |
+| `scenarios.py` | YAML parsing and data preparation for the model |
+| `cli.py` | A clear CLI |
+
+This ensures that the core logic remains independent of I/O operations for cleaniness and testability.
+
+## 3. Project Structure
+
+```
+refrigerant-optimization-chemours/
+│
+├── .github/workflows/          # CI/CD automation
+│   └── ci.yml                  # Automated testing pipeline
+│
+├── examples/                   # Scenario definitions
+│   ├── scenario1.yaml          # Example optimization scenario
+│   └── ...                     # Additional test scenarios
+│
+├── src/                        # Source code
+│   ├── __init__.py            # Package initialization
+│   ├── cli.py                 # Command-line interface
+│   ├── data.py                # Static data definitions
+│   ├── model.py               # Core PuLP optimization model
+│   └── scenarios.py           # Scenario loading and processing
+│
+├── tests/                      # Test suite
+│   ├── test_model.py          # Core model logic tests
+│   └── test_edge.py           # Edge case tests
+│
+├── pyproject.toml             # Project metadata and dependencies
+└── README.md                  # Project documentation
+```
+
+## 4. Getting Started (Installation)
+
+### Prerequisites
+
+- Python 3.10 or higher
+- pip package manager
+- Git
+
+### Installation Steps
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/daksh-7/refrigerant-optimization-chemours.git
+   cd refrigerant-optimization-chemours
+   ```
+
+2. **Create and Activate a Virtual Environment**
+   
+   **Windows:**
+   ```bash
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+   
+   **macOS/Linux:**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   pip install -e .[dev]
+   ```
+   
+   > **Note**: The `-e` flag installs in "editable" mode, allowing live code modifications. The `[dev]` extra includes development dependencies like `pytest`.
+
+## 5. Usage (Planned)
+
+The optimization model is executed via command line with scenario file specification.
+
+### Command Syntax
+
+```bash
+python -m src.cli solve --scenario examples/scenario1.yaml
+```
+
+### Expected Output
+
+```
+--- Optimizing for Scenario: examples/scenario1.yaml ---
+[SUCCESS] Optimal solution found.
+
+Decision: Refuel Existing Refrigerant
+Total Cost: $160.50
+
+Breakdown:
+  + Add 6.00 kg of Element A
+  + Add 4.50 kg of Element B
+  + Add 3.00 kg of Element C
+  + Add 1.50 kg of Element D
+```
+
+## 6. Testing
+
+This project follows **Test-Driven Development (TDD)** methodology using the `pytest` framework.
+
+### Test Categories
+
+- **`test_model.py`**: Validates core logic against known scenarios
+- **`test_edge.py`**: Ensures robustness by testing against edge cases
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage report
+pytest --cov=src
+
+# Run specific test file
+pytest tests/test_model.py
+```
+
+### Continuous Integration
+
+The CI pipeline (`github/workflows/ci.yml`) automatically executes the test suite on every push to ensure code quality and prevent any regressions.
+
+## 7. Project Roadmap
+
+### Phase 1: Research & Architecture ✓
+
+- [x] In-depth problem analysis
+- [x] Modular system architecture design
+- [x] Repository structure setup
+- [x] CI/CD pipeline configuration
+
+### Phase 2: Core Model Development (Current)
+
+- [ ] Write initial failing tests for Scenario 1
+- [ ] Implement PuLP model to pass Scenario 1 tests
+- [ ] Extend model for all scenarios (refuel, new blend, combined)
+- [ ] Validate against all test cases
+
+### Phase 3: Integration & Finalization
+
+- [ ] Develop CLI interface
+- [ ] Implement scenario loading logic
+- [ ] Complete comprehensive testing suite
+- [ ] Write edge case handlers
+- [ ] Finalize documentation
+- [ ] Prepare final report
+
+---
+
+## Contributing
+
+Since this is a private assignment project, contributions are not accepted at this time.
+
+## Contact
+
+For any questions or concerns, please contact me through GitHub.
