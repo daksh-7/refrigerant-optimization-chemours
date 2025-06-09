@@ -1,6 +1,6 @@
 # Refrigerant Optimization Model
 
-![Project Status](https://img.shields.io/badge/status-research%20&%20planning-blue)
+![Project Status](https://img.shields.io/badge/status-development-orange)
 ![Language](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![Library](https://img.shields.io/badge/library-PuLP-orange)
 ![Testing](https://img.shields.io/badge/testing-Pytest-brightgreen)
@@ -46,41 +46,57 @@ This project will be developed using a **Test-Driven Development (TDD)** approac
 
 ## 3. Installation Instructions
 
-This project will be a standard Python package. To set up the environment and run the model (once developed), follow these steps:
+This project is a standard Python package. To set up the environment and run the model, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-link>
-    cd refrigerant-optimization-model
+    git clone https://github.com/daksh-7/refrigerant-optimization-chemours.git
+    cd refrigerant-optimization-chemours
     ```
 
 2.  **Create and activate a virtual environment:**
     ```bash
-    # For macOS/Linux
-    python3 -m venv venv
-    source venv/bin/activate
-
     # For Windows
     python -m venv venv
     .\venv\Scripts\activate
+
+    # For macOS/Linux
+    python3 -m venv venv
+    source venv/bin/activate
     ```
 
 3.  **Install dependencies:**
-    A `requirements.txt` file will be maintained. Install the necessary libraries using:
     ```bash
-    pip install -r requirements.txt
+    pip install -e .
     ```
-    *Primary dependencies will be `pulp` and `pytest`.*
+    
+    For development (includes testing tools):
+    ```bash
+    pip install -e .[dev]
+    ```
 
-## 4. Usage (Planned)
+## 4. Usage
 
-The model will be accessible via a command-line interface (CLI) for ease of use and testing. The planned execution would look like this:
+The model is accessible via a command-line interface (CLI) for ease of use and testing.
 
+### Running Tests
 ```bash
-# To run a specific, pre-defined scenario from the assignment
-python main.py --scenario 1
+# Run all tests
+pytest
 
-# Example output would be:
+# Run tests with coverage
+pytest --cov=src
+
+# Run specific test file
+pytest tests/test_model.py -v
+```
+
+### Running Optimization (Planned)
+```bash
+# To run a specific scenario from the assignment
+python -m src.cli solve --scenario examples/scenario1.yaml
+
+# Example output:
 # --- Scenario 1: Refueling Optimization ---
 # Status: Optimal
 # Total Cost: $160.50
@@ -90,3 +106,23 @@ python main.py --scenario 1
 # Add Element B: 4.5 kg
 # Add Element C: 3.0 kg
 # Add Element D: 1.5 kg
+```
+
+## 5. Project Structure
+
+```
+refrigerant-optimization-chemours/
+├── src/
+│   ├── __init__.py
+│   ├── cli.py              # Command-line interface
+│   ├── data.py             # Static data and constants
+│   ├── model.py            # Core PuLP optimization model
+│   └── scenarios.py        # Scenario loading and processing
+├── tests/
+│   ├── test_model.py       # Core model tests
+│   └── test_edge.py        # Edge case tests
+├── examples/
+│   ├── scenario1.yaml      # Test scenarios
+│   ├── scenario2.yaml
+│   └── scenario3.yaml
+└── pyproject.toml          # Project configuration
