@@ -1,9 +1,8 @@
 from src.model import RefrigerantOptimizer
 from src.data import ELEMENT_PRICES, DEFAULT_RATIOS
 
-#File doesn't work because model.py is empty, and therefore the RefrigerantOptimizer class is not defined
 class TestScenario1Refuel:    
-
+#All tests but the third one pass because the RefrigerantOptimizer class, including some methods, are now defined in model.py and usable. 
     def test_s1_basic(self):
         initial_composition = {'A': 40, 'B': 30, 'C': 20, 'D': 10}
         
@@ -27,7 +26,9 @@ class TestScenario1Refuel:
         
         expected = {'A': 6.0, 'B': 4.5, 'C': 3.0, 'D': 1.5}
         assert max_additions == expected
-    
+
+#Since optimize_refuel and optimize_new_blend are not yet defined, and optimize() calls these methods,this test will fail.    
+
     def test_s1_optimization(self):
         initial_composition = {'A': 40, 'B': 30, 'C': 20, 'D': 10}
         
