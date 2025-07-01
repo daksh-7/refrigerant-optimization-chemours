@@ -13,10 +13,10 @@ The deliverables include a reusable optimisation engine, a command-line interfac
 ## 2 Project Timeline
 | Week | Primary Activity | Outcome |
 |------|------------------|---------|
-| 1 | Proof-of-concept PuLP model | Feasible "refuel" prototype |
-| 2 | Mathematical refinement | Ratio enforcement implemented via Big-M formulation |
-| 3 | Code refactor & testing | Object-oriented core, full pytest coverage |
-| 4 | User-facing tooling & documentation | Click-based CLI, README and final report |
+| 1 | Initial PuLP model | Feasible "refuel" prototype |
+| 2 | Polishing | Ratio enforcement implemented via PulP |
+| 3 | Complete overhaul | Implemented Big-M |
+| 4 | Testing, User-facing tooling & documentation | Full Pytest Coverage, Click-based CLI, README and final report |
 
 ---
 
