@@ -129,4 +129,4 @@ The Refrigerant Optimisation Toolkit meets all specified requirements: it select
 ---
 
 ## 9 Acknowledgements
-I thank **Gaurav Bhardwaj** for clear project guidance.  Additional appreciation is extended to the contributors of Stack Overflow for their invaluable insights during development. 
+I thank **Gaurav Bhardwaj** for clear project guidance.  Additional appreciation is extended to the contributors of Stack Overflow for their invaluable insights during development.
