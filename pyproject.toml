@@ -29,3 +29,6 @@ dev = [
 
 [project.scripts]
 refrigerant-opt = "src.cli:main"
+
+[tool.setuptools]
+packages = ["src"]

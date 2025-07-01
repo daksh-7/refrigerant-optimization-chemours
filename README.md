@@ -1,128 +1,134 @@
-# Refrigerant Optimization Model
+# Refrigerant Optimisation Toolkit
 
-![Project Status](https://img.shields.io/badge/status-development-orange)
-![Language](https://img.shields.io/badge/python-3.10+-blue.svg)
-![Library](https://img.shields.io/badge/library-PuLP-orange)
-![Testing](https://img.shields.io/badge/testing-Pytest-brightgreen)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/) [![PuLP](https://img.shields.io/badge/solver-PuLP-orange)](https://coin-or.github.io/pulp/) [![Tests](https://img.shields.io/badge/tests-pytest-brightgreen)](https://pytest.org/)
 
-## 1. Project Overview
+---
 
-This project aims to develop a linear optimization model to enhance the cost-effectiveness and sustainability of refrigerant management. The model will determine the most economical strategy for handling refrigerant stocks by deciding between two primary actions:
+## Purpose
 
-1.  **Refueling:** Topping up an existing refrigerant mixture with a limited quantity of new elements.
-2.  **Formulation:** Creating a new refrigerant blend from a specified subset of available elements.
+The repository provides an LP that selects the lowest-cost way to either top-up (refuel) an existing refrigerant charge or formulate a fresh blend from scratch. Four elements: A, B, C, D are available with addition and extraction prices given.  The model respects three core rules:
 
-The solution will be a decision-support tool that minimizes operational costs while adhering to strict chemical composition, ratio, and quantity constraints. This work is foundational for optimizing resource allocation in refrigerant recycling and distillation processes.
+1. at most **15 %** of the current mass may be added when refuelling;
+2. every blend keeps the fixed ratio **4 : 3 : 2 : 1** (or a consistent subset if some elements are absent);
+3. at least one element must be present.
 
-## 2. Approach & Proposed Solution
+The optimisation logic lives in `src/model.py` and is solved with the PuLP library.
 
-The problem is a resource allocation challenge, perfectly suited for **Linear Programming (LP)**. My approach is to translate the business rules and constraints into a formal mathematical model and solve it using the `PuLP` library in Python.
+---
 
-### A. Mathematical Formulation (The Plan)
+## Installation
 
-The model will be built around the following core components:
-
-*   **Decision Variables:**
-    *   `add_e`: Continuous variable representing the kilograms (kg) of element `e` to **add**.
-    *   `extract_e`: Continuous variable representing the kilograms (kg) of element `e` to **extract/remove**.
-    *   Variables to handle the binary choice between refueling and creating a new blend will be formulated to ensure the logic is mutually exclusive.
-
-*   **Objective Function:**
-    The primary goal is to minimize total cost. The objective function will be:
-    `Minimize(Total Cost) = Σ (add_e * addition_price_e) + Σ (extract_e * extraction_price_e)`
-    for all elements `e` in {A, B, C, D}.
-
-*   **Key Constraints:**
-    The model's logic will be governed by a set of precise constraints derived directly from the assignment:
-    1.  **Mass Balance:** The final weight of the refrigerant must match the system's requirement.
-    2.  **Refueling Limit:** When refueling, the amount of each element added (`add_e`) cannot exceed 15% of its original quantity in the mixture.
-    3.  **Ratio Integrity:** For both refueling and new blend formulation, the elemental ratios (e.g., 4:3:2:1) must be strictly maintained within the chosen subset of elements.
-    4.  **Subset Composition:** A new blend must use a subset of the original elements {A, B, C, D}, containing at least one element.
-    5.  **Non-Negativity:** All decision variables for quantities must be greater than or equal to zero.
-
-### B. Development Methodology
-
-This project will be developed using a **Test-Driven Development (TDD)** approach. I will begin by writing failing tests that codify the requirements of each scenario. I will then write the minimum amount of code required to make the tests pass, before refactoring for clarity and efficiency. This ensures the model is robust, verifiable, and correct by design.
-
-## 3. Installation Instructions
-
-This project is a standard Python package. To set up the environment and run the model, follow these steps:
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/daksh-7/refrigerant-optimization-chemours.git
-    cd refrigerant-optimization-chemours
-    ```
-
-2.  **Create and activate a virtual environment:**
-    ```bash
-    # For Windows
-    python -m venv venv
-    .\venv\Scripts\activate
-
-    # For macOS/Linux
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3.  **Install dependencies:**
-    ```bash
-    pip install -e .
-    ```
-    
-    For development (includes testing tools):
-    ```bash
-    pip install -e .[dev]
-    ```
-
-## 4. Usage
-
-The model is accessible via a command-line interface (CLI) for ease of use and testing.
-
-### Running Tests
 ```bash
-# Run all tests
-pytest
-
-# Run tests with coverage
-pytest --cov=src
-
-# Run specific test file
-pytest tests/test_model.py -v
+python -m venv venv
+venv\Scripts\activate
+pip install -e .
 ```
 
-### Running Optimization (Planned)
+The editable install (`-e`) honors the `pyproject.toml` metadata and exposes the command `refrigerant-opt`.
+
+---
+
+## Command-line interface
+
 ```bash
-# To run a specific scenario from the assignment
-python -m src.cli solve --scenario examples/scenario1.yaml
+# Refuel (Scenario 1): top-up an existing charge
+#   --mix    YAML file mapping each element to the current kg in the vessel
+#   --target Desired total weight **after** refuel (kg). Optional – defaults to "as little as possible" within the 15 % cap.
+refrigerant-opt refuel --mix examples/scenario1.yaml --target 110
 
-# Example output:
-# --- Scenario 1: Refueling Optimization ---
-# Status: Optimal
-# Total Cost: $160.50
-#
-# --- Decision Variables ---
-# Add Element A: 6.0 kg
-# Add Element B: 4.5 kg
-# Add Element C: 3.0 kg
-# Add Element D: 1.5 kg
+# New blend (Scenario 2): formulate a fresh mixture from scratch
+#   --weight Desired total weight of the new blend (kg)
+refrigerant-opt new-blend --weight 80
+
+# Combined optimisation (Scenario 3): make any combination of removals, additions
+# and fresh extractions to hit a target weight at minimum cost.
+#   --mix    YAML file with the *current* composition
+#   --target Final desired weight (kg)
+refrigerant-opt optimise --mix examples/scenario3.yaml --target 120
+
+# Auto mode: convenience wrapper that currently behaves exactly like `optimise` but
+# lets the optimiser decide the cheapest strategy automatically.
+refrigerant-opt auto --mix examples/scenario1.yaml --target 110
 ```
 
-## 5. Project Structure
+Run `refrigerant-opt --help` (or any sub-command with `--help`) to see the full list of options.
+
+> **Note:** the `examples/` directory only contains `scenario1.yaml` and `scenario3.yaml` because Scenario 2 (the fresh *new-blend* case) does **not** require an input composition file – the optimiser builds the mixture from scratch given only the `--weight` argument.
+
+The tool prints a JSON report identical to the dictionaries returned by the Python API.
+
+---
+
+## Running the tests
+
+```bash
+pytest -v
+```
+
+The suite (`tests/test_model.py`) covers:
+
+* attribute accessors (`operation`, `initial_composition`);
+* maximum additions calculation for a 100 kg reference charge;
+* solver output for refuelling and empty-tank cases;
+* validation of bad inputs;
+* formulation of an 80 kg new blend;
+* combined extraction/addition optimisation to hit a 120 kg target.
+
+All tests report **PASSED**.
+
+---
+
+## Usage example
+
+```python
+from src.model import RefrigerantOptimizer
+
+# 1) Refuel an existing 100 kg charge
+base = {"A": 40, "B": 30, "C": 20, "D": 10}
+refuel = RefrigerantOptimizer("refuel", initial_composition=base)
+print(refuel.optimize())
+
+# 2) Formulate a brand-new 80 kg blend
+blend = RefrigerantOptimizer("new_blend", target_weight=80)
+print(blend.optimize())
+
+# 3) Combined optimisation – reduce a 150 kg charge to 120 kg at minimum cost
+mix = {"A": 60, "B": 45, "C": 30, "D": 15}
+opt = RefrigerantOptimizer("optimise_mixture", initial_composition=mix, target_weight=120)
+print(opt.optimize())
+
+# 4) Auto mode (currently identical to optimise_mixture)
+auto_opt = RefrigerantOptimizer("auto", initial_composition=mix, target_weight=120)
+print(auto_opt.optimize())
+
+# Helper: see how much you are allowed to add during refuel (15 % cap)
+print(refuel.calculate_max_additions())
+```
+
+All calls return a dictionary with keys:
+
+* `status`: CBC solver status (e.g. *Optimal*),
+* `total_cost`: float,
+* `final_composition`: element-mass mapping,
+* operation-specific details (`additions`, `removals`, `extractions`).
+
+---
+
+## Project structure
 
 ```
-refrigerant-optimization-chemours/
-├── src/
+├── src
 │   ├── __init__.py
-│   ├── cli.py              # Command-line interface
-│   ├── data.py             # Static data and constants
-│   ├── model.py            # Core PuLP optimization model
-│   └── scenarios.py        # Scenario loading and processing
-├── tests/
-│   ├── test_model.py       # Core model tests
-│   └── test_edge.py        # Edge case tests
-├── examples/
-│   ├── scenario1.yaml      # Test scenarios
-│   ├── scenario2.yaml
+│   ├── cli.py           # Click CLI entry-point
+│   ├── data.py          # price table, ratios, constants
+│   └── model.py         # PuLP-based optimiser
+├── tests                # pytest suite
+│   ├── conftest.py
+│   └── test_model.py
+├── examples             # YAML scenario files
+│   ├── scenario1.yaml
 │   └── scenario3.yaml
-└── pyproject.toml          # Project configuration
+└── pyproject.toml
+```
+
+---
