@@ -128,12 +128,5 @@ The Refrigerant Optimisation Toolkit meets all specified requirements: it select
 
 ---
 
-## 9 Future Work
-* **Sensitivity analysis** Evaluate cost elasticity with respect to volatile market prices.
-* **Graphical user interface** Deliver a browser-based dashboard for non-technical stakeholders.
-* **Stochastic optimisation** Handle price uncertainty through scenario sampling or chance-constrained programming.
-
----
-
-## 10 Acknowledgements
-The author thanks **Gaurav Bhardwaj** for clear project guidance.  Additional appreciation is extended to the contributors of Stack Overflow for their invaluable insights during development. 
+## 9 Acknowledgements
+I thank **Gaurav Bhardwaj** for clear project guidance.  Additional appreciation is extended to the contributors of Stack Overflow for their invaluable insights during development. 
