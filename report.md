@@ -70,18 +70,40 @@ The optimisation problem is expressed as a *mixed-integer linear programme* (MIL
 | `qty_e`      | final kilograms of element *e* in the vessel |
 | `used_e ∈ {0,1}` | binary flag – 1 if element *e* appears in the final blend |
 
-**Objective** (minimise total cost)
+**Objective** (minimise total cost)  
 
-\[
-\text{minimise}\;\sum_e \bigl(c^{\text{add}}_e \; add_e\; +\; c^{\text{extr}}_e\; (new_e + remove_e)\bigr)
-\]
+```math
+\min \sum_e \Bigl( c^{\text{add}}_e\,\mathrm{add}_e
+           + c^{\text{extr}}_e\,(\mathrm{new}_e + \mathrm{remove}_e) \Bigr)
+```
 
 **Constraint groups**
-1. *15 % addition cap* \( add_e ≤ 0.15 \times \text{current}_e \)
-2. *Mass balance* \( qty_e = \text{current}_e + add_e - remove_e + new_e \)
-3. *Element selection* see Big-M formulation in §3.2.
-4. *Ratio enforcement* \( qty_i·r_j = qty_j·r_i \) for all selected pairs (i, j).
-5. *Target weight* \(\sum_e qty_e = \text{target\_weight}\).
+
+1. *15 % addition cap*  
+
+   ```math
+   \mathrm{add}_e \le 0.15\,\mathrm{current}_e
+   ```
+
+2. *Mass balance*  
+
+   ```math
+   \mathrm{qty}_e = \mathrm{current}_e + \mathrm{add}_e - \mathrm{remove}_e + \mathrm{new}_e
+   ```
+
+3. *Element selection* – see Big-M formulation in §3.2.  
+
+4. *Ratio enforcement*  
+
+   ```math
+   \mathrm{qty}_i\,r_j = \mathrm{qty}_j\,r_i \quad\text{for all selected pairs }(i,j)
+   ```
+
+5. *Target weight*  
+
+   ```math
+   \sum_e \mathrm{qty}_e = \mathrm{target\_weight}
+   ```
 
 **Key constants**
 
